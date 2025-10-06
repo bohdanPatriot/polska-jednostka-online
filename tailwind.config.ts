@@ -57,6 +57,23 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        military: {
+          green: "hsl(var(--military-green))",
+          "green-light": "hsl(var(--military-green-light))",
+          "green-dark": "hsl(var(--military-green-dark))",
+          gray: "hsl(var(--military-gray))",
+          "gray-light": "hsl(var(--military-gray-light))",
+          "gray-dark": "hsl(var(--military-gray-dark))",
+        },
+        rank: {
+          bronze: "hsl(var(--rank-bronze))",
+          silver: "hsl(var(--rank-silver))",
+          gold: "hsl(var(--rank-gold))",
+        },
+      },
+      fontFamily: {
+        sans: ["Inter", "system-ui", "sans-serif"],
+        military: ["Rajdhani", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
