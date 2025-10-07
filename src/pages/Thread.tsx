@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ModerationControls } from "@/components/ModerationControls";
+import { PostModerationControls } from "@/components/PostModerationControls";
 
 const Thread = () => {
   const { threadId } = useParams();
@@ -161,14 +163,24 @@ const Thread = () => {
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <Card className="mb-6">
           <CardHeader>
-            <div className="flex items-center gap-2 mb-2">
-              {thread.is_pinned && <Badge variant="secondary">Przypięty</Badge>}
-              {thread.is_locked && <Badge variant="outline">Zablokowany</Badge>}
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  {thread.is_pinned && <Badge variant="secondary">Przypięty</Badge>}
+                  {thread.is_locked && <Badge variant="outline">Zablokowany</Badge>}
+                </div>
+                <CardTitle className="text-3xl font-military">{thread.title}</CardTitle>
+                <p className="text-muted-foreground">
+                  przez {thread.profiles?.username} • {formatDate(thread.created_at)}
+                </p>
+              </div>
+              <ModerationControls
+                threadId={threadId!}
+                isPinned={thread.is_pinned}
+                isLocked={thread.is_locked}
+                onUpdate={fetchThread}
+              />
             </div>
-            <CardTitle className="text-3xl font-military">{thread.title}</CardTitle>
-            <p className="text-muted-foreground">
-              przez {thread.profiles?.username} • {formatDate(thread.created_at)}
-            </p>
           </CardHeader>
         </Card>
 
@@ -183,9 +195,16 @@ const Thread = () => {
                       {getRankDisplay(post.profiles?.rank)}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {index === 0 ? "Pierwotny post" : `#${index + 1}`} • {formatDate(post.created_at)}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm text-muted-foreground">
+                      {index === 0 ? "Pierwotny post" : `#${index + 1}`} • {formatDate(post.created_at)}
+                    </p>
+                    <PostModerationControls
+                      postId={post.id}
+                      authorId={post.author_id}
+                      onDelete={fetchPosts}
+                    />
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>

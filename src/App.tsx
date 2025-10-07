@@ -9,6 +9,7 @@ import Forum from "./pages/Forum";
 import Category from "./pages/Category";
 import NewThread from "./pages/NewThread";
 import Thread from "./pages/Thread";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/category/:categoryId" element={<Category />} />
           <Route path="/category/:categoryId/new" element={<NewThread />} />
           <Route path="/thread/:threadId" element={<Thread />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

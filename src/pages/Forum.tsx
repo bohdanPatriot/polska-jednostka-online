@@ -5,7 +5,7 @@ import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, MessageSquare, FileText, Newspaper, MessageCircle, LogOut, User as UserIcon } from "lucide-react";
+import { Shield, MessageSquare, FileText, Newspaper, MessageCircle, LogOut, User as UserIcon, Settings } from "lucide-react";
 
 const categories = [
   { id: "historia", name: "Historia", icon: FileText, description: "Dyskusje o historii polskiego wojska" },
@@ -19,6 +19,7 @@ const Forum = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -52,6 +53,13 @@ const Forum = () => {
     if (data) {
       setProfile(data);
     }
+
+    const { data: roles } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId);
+
+    setIsAdmin(roles?.some(r => r.role === "admin") || false);
   };
 
   const handleSignOut = async () => {
@@ -96,6 +104,12 @@ const Forum = () => {
                 <span className="font-medium">{profile.username}</span>
                 <Badge variant="outline">{getRankDisplay(profile.rank)}</Badge>
               </div>
+            )}
+            {isAdmin && (
+              <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
+                <Settings className="h-4 w-4 mr-2" />
+                Admin
+              </Button>
             )}
             <Button variant="outline" size="sm" onClick={handleSignOut}>
               <LogOut className="h-4 w-4 mr-2" />
