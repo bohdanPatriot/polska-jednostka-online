@@ -106,6 +106,27 @@ const Admin = () => {
     }
   };
 
+  const handleRankChange = async (userId: string, newRank: string) => {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ rank: newRank as any })
+      .eq("id", userId);
+
+    if (error) {
+      toast({
+        title: "Błąd",
+        description: "Nie udało się zmienić stopnia",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Sukces",
+        description: "Stopień został zmieniony",
+      });
+      fetchUsers();
+    }
+  };
+
   const getRankDisplay = (rank: string) => {
     const rankMap: { [key: string]: string } = {
       rekrut: "Rekrut",
@@ -166,7 +187,7 @@ const Admin = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Użytkownik</TableHead>
-                  <TableHead>Stopień</TableHead>
+                  <TableHead>Stopień Wojskowy</TableHead>
                   <TableHead>Posty</TableHead>
                   <TableHead>Dołączył</TableHead>
                   <TableHead>Rola</TableHead>
@@ -182,7 +203,32 @@ const Admin = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline">{getRankDisplay(user.rank)}</Badge>
+                      <Select
+                        value={user.rank}
+                        onValueChange={(value) => handleRankChange(user.id, value)}
+                      >
+                        <SelectTrigger className="w-48">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="rekrut">🎖️ Rekrut</SelectItem>
+                          <SelectItem value="starszy_szeregowy">🎖️ Starszy Szeregowy</SelectItem>
+                          <SelectItem value="kapral">🎖️ Kapral</SelectItem>
+                          <SelectItem value="plutonowy">⭐ Plutonowy</SelectItem>
+                          <SelectItem value="sierzant">⭐ Sierżant</SelectItem>
+                          <SelectItem value="starszy_sierzant">⭐ Starszy Sierżant</SelectItem>
+                          <SelectItem value="mlodszy_chorazy">⭐⭐ Młodszy Chorąży</SelectItem>
+                          <SelectItem value="chorazy">⭐⭐ Chorąży</SelectItem>
+                          <SelectItem value="starszy_chorazy">⭐⭐ Starszy Chorąży</SelectItem>
+                          <SelectItem value="podporucznik">🎯 Podporucznik</SelectItem>
+                          <SelectItem value="porucznik">🎯 Porucznik</SelectItem>
+                          <SelectItem value="kapitan">🎯 Kapitan</SelectItem>
+                          <SelectItem value="major">👑 Major</SelectItem>
+                          <SelectItem value="podpulkownik">👑 Podpułkownik</SelectItem>
+                          <SelectItem value="pulkownik">👑 Pułkownik</SelectItem>
+                          <SelectItem value="general">⚡ Generał</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </TableCell>
                     <TableCell>{user.posts_count}</TableCell>
                     <TableCell>
