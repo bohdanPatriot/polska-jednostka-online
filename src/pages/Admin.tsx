@@ -6,8 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shield, ArrowLeft, User as UserIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { AuditLogViewer } from "@/components/admin/AuditLogViewer";
+import { UserSessionTracker } from "@/components/admin/UserSessionTracker";
+import { UserBanManager } from "@/components/admin/UserBanManager";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -177,84 +181,110 @@ const Admin = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-military">Zarządzanie Użytkownikami</CardTitle>
-            <CardDescription>Przypisuj role użytkownikom forum</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Użytkownik</TableHead>
-                  <TableHead>Stopień Wojskowy</TableHead>
-                  <TableHead>Posty</TableHead>
-                  <TableHead>Dołączył</TableHead>
-                  <TableHead>Rola</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <UserIcon className="h-4 w-4 text-muted-foreground" />
-                        {user.username}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Select
-                        value={user.rank}
-                        onValueChange={(value) => handleRankChange(user.id, value)}
-                      >
-                        <SelectTrigger className="w-48">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="rekrut">🎖️ Rekrut</SelectItem>
-                          <SelectItem value="starszy_szeregowy">🎖️ Starszy Szeregowy</SelectItem>
-                          <SelectItem value="kapral">🎖️ Kapral</SelectItem>
-                          <SelectItem value="plutonowy">⭐ Plutonowy</SelectItem>
-                          <SelectItem value="sierzant">⭐ Sierżant</SelectItem>
-                          <SelectItem value="starszy_sierzant">⭐ Starszy Sierżant</SelectItem>
-                          <SelectItem value="mlodszy_chorazy">⭐⭐ Młodszy Chorąży</SelectItem>
-                          <SelectItem value="chorazy">⭐⭐ Chorąży</SelectItem>
-                          <SelectItem value="starszy_chorazy">⭐⭐ Starszy Chorąży</SelectItem>
-                          <SelectItem value="podporucznik">🎯 Podporucznik</SelectItem>
-                          <SelectItem value="porucznik">🎯 Porucznik</SelectItem>
-                          <SelectItem value="kapitan">🎯 Kapitan</SelectItem>
-                          <SelectItem value="major">👑 Major</SelectItem>
-                          <SelectItem value="podpulkownik">👑 Podpułkownik</SelectItem>
-                          <SelectItem value="pulkownik">👑 Pułkownik</SelectItem>
-                          <SelectItem value="general">⚡ Generał</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell>{user.posts_count}</TableCell>
-                    <TableCell>
-                      {new Date(user.joined_at).toLocaleDateString("pl-PL")}
-                    </TableCell>
-                    <TableCell>
-                      <Select
-                        value={user.roles[0] || "user"}
-                        onValueChange={(value) => handleRoleChange(user.id, value)}
-                      >
-                        <SelectTrigger className="w-40">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="user">Użytkownik</SelectItem>
-                          <SelectItem value="moderator">Moderator</SelectItem>
-                          <SelectItem value="admin">Administrator</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        <Tabs defaultValue="users" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="users">Users & Roles</TabsTrigger>
+            <TabsTrigger value="sessions">IP Tracking</TabsTrigger>
+            <TabsTrigger value="audit">Audit Log</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="users">
+            <Card>
+              <CardHeader>
+                <CardTitle className="font-military">Zarządzanie Użytkownikami</CardTitle>
+                <CardDescription>Przypisuj role i blokuj użytkowników forum</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Użytkownik</TableHead>
+                      <TableHead>Stopień Wojskowy</TableHead>
+                      <TableHead>Posty</TableHead>
+                      <TableHead>Dołączył</TableHead>
+                      <TableHead>Rola</TableHead>
+                      <TableHead>Akcje</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {users.map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            <UserIcon className="h-4 w-4 text-muted-foreground" />
+                            {user.username}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Select
+                            value={user.rank}
+                            onValueChange={(value) => handleRankChange(user.id, value)}
+                          >
+                            <SelectTrigger className="w-48">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="rekrut">🎖️ Rekrut</SelectItem>
+                              <SelectItem value="starszy_szeregowy">🎖️ Starszy Szeregowy</SelectItem>
+                              <SelectItem value="kapral">🎖️ Kapral</SelectItem>
+                              <SelectItem value="plutonowy">⭐ Plutonowy</SelectItem>
+                              <SelectItem value="sierzant">⭐ Sierżant</SelectItem>
+                              <SelectItem value="starszy_sierzant">⭐ Starszy Sierżant</SelectItem>
+                              <SelectItem value="mlodszy_chorazy">⭐⭐ Młodszy Chorąży</SelectItem>
+                              <SelectItem value="chorazy">⭐⭐ Chorąży</SelectItem>
+                              <SelectItem value="starszy_chorazy">⭐⭐ Starszy Chorąży</SelectItem>
+                              <SelectItem value="podporucznik">🎯 Podporucznik</SelectItem>
+                              <SelectItem value="porucznik">🎯 Porucznik</SelectItem>
+                              <SelectItem value="kapitan">🎯 Kapitan</SelectItem>
+                              <SelectItem value="major">👑 Major</SelectItem>
+                              <SelectItem value="podpulkownik">👑 Podpułkownik</SelectItem>
+                              <SelectItem value="pulkownik">👑 Pułkownik</SelectItem>
+                              <SelectItem value="general">⚡ Generał</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell>{user.posts_count}</TableCell>
+                        <TableCell>
+                          {new Date(user.joined_at).toLocaleDateString("pl-PL")}
+                        </TableCell>
+                        <TableCell>
+                          <Select
+                            value={user.roles[0] || "user"}
+                            onValueChange={(value) => handleRoleChange(user.id, value)}
+                          >
+                            <SelectTrigger className="w-40">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="user">Użytkownik</SelectItem>
+                              <SelectItem value="moderator">Moderator</SelectItem>
+                              <SelectItem value="admin">Administrator</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell>
+                          <UserBanManager 
+                            userId={user.id} 
+                            username={user.username}
+                            onBanComplete={fetchUsers}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="sessions">
+            <UserSessionTracker />
+          </TabsContent>
+
+          <TabsContent value="audit">
+            <AuditLogViewer />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );

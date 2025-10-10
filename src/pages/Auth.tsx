@@ -63,7 +63,7 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error, data } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -75,6 +75,20 @@ const Auth = () => {
         variant: "destructive",
       });
     } else {
+      // Track the login session with IP and geolocation
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          await supabase.functions.invoke("track-session", {
+            headers: {
+              Authorization: `Bearer ${session.access_token}`,
+            },
+          });
+        }
+      } catch (trackError) {
+        console.error("Failed to track session:", trackError);
+      }
+      
       navigate("/forum");
     }
     setLoading(false);
