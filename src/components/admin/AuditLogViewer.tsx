@@ -39,7 +39,7 @@ export function AuditLogViewer() {
         .from("audit_logs")
         .select(`
           *,
-          profiles!audit_logs_admin_id_fkey(username)
+          profiles(username)
         `)
         .order("created_at", { ascending: false })
         .limit(100);
@@ -48,7 +48,7 @@ export function AuditLogViewer() {
 
       const formattedLogs = data.map((log: any) => ({
         ...log,
-        admin_username: log.profiles?.username || "Unknown",
+        admin_username: log.profiles?.username || log.audit_logs_admin_id_fkey?.username || "Unknown",
       }));
 
       setLogs(formattedLogs);

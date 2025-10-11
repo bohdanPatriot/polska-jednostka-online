@@ -48,7 +48,7 @@ export function UserSessionTracker() {
 
       const formattedSessions = data.map((session: any) => ({
         ...session,
-        username: session.profiles?.username || "Unknown",
+        username: session.profiles?.username || session.user_sessions_user_id_fkey?.username || "Unknown",
       }));
 
       setSessions(formattedSessions);
