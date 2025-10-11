@@ -12,25 +12,23 @@ serve(async (req) => {
   }
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      throw new Error("No authorization header");
-    }
-
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
       {
         global: {
-          headers: { Authorization: authHeader },
+          headers: { Authorization: req.headers.get("Authorization")! },
         },
       }
     );
 
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(authHeader.replace("Bearer ", ""));
-    if (userError || !user) {
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    if (authError || !user) {
+      console.error("Auth error:", authError);
       throw new Error("Not authenticated");
     }
+
+    console.log("User authenticated:", user.id);
 
     // Get IP address from request
     const ip = req.headers.get("x-forwarded-for") || 
@@ -58,8 +56,13 @@ serve(async (req) => {
       }
     }
 
-    // Insert session record
-    const { error: insertError } = await supabaseClient
+    // Insert session record using service role to bypass RLS
+    const serviceClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    const { error: insertError } = await serviceClient
       .from("user_sessions")
       .insert({
         user_id: user.id,
@@ -71,8 +74,11 @@ serve(async (req) => {
       });
 
     if (insertError) {
+      console.error("Insert error:", insertError);
       throw insertError;
     }
+
+    console.log("Session tracked successfully for user:", user.id);
 
     return new Response(
       JSON.stringify({ success: true, ip, ...geoData }),
