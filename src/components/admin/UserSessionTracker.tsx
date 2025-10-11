@@ -39,7 +39,7 @@ export function UserSessionTracker() {
         .from("user_sessions")
         .select(`
           *,
-          profiles!user_sessions_user_id_fkey(username)
+          profiles(username)
         `)
         .order("created_at", { ascending: false })
         .limit(50);
