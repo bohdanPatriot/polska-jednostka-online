@@ -5,7 +5,8 @@ import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, MessageSquare, FileText, Newspaper, MessageCircle, LogOut, User as UserIcon, Settings } from "lucide-react";
+import { Shield, MessageSquare, FileText, Newspaper, MessageCircle, LogOut, User as UserIcon, Settings, Calendar } from "lucide-react";
+import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 
 const categories = [
   { id: "historia", name: "Historia", icon: FileText, description: "Dyskusje o historii polskiego wojska" },
@@ -105,6 +106,15 @@ const Forum = () => {
                 <Badge variant="outline">{getRankDisplay(profile.rank)}</Badge>
               </div>
             )}
+            <NotificationCenter />
+            <Button variant="outline" size="sm" onClick={() => navigate("/profile")}>
+              <UserIcon className="h-4 w-4 mr-2" />
+              Profil
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => navigate("/events")}>
+              <Calendar className="h-4 w-4 mr-2" />
+              Wydarzenia
+            </Button>
             {isAdmin && (
               <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
                 <Settings className="h-4 w-4 mr-2" />

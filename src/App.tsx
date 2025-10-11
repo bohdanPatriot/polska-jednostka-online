@@ -10,6 +10,8 @@ import Category from "./pages/Category";
 import NewThread from "./pages/NewThread";
 import Thread from "./pages/Thread";
 import Admin from "./pages/Admin";
+import Profile from "./pages/Profile";
+import Events from "./pages/Events";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +30,8 @@ const App = () => (
           <Route path="/category/:categoryId/new" element={<NewThread />} />
           <Route path="/thread/:threadId" element={<Thread />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/events" element={<Events />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

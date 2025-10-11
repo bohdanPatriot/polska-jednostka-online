@@ -61,6 +61,116 @@ export type Database = {
           },
         ]
       }
+      badges: {
+        Row: {
+          created_at: string | null
+          criteria: Json | null
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          criteria?: Json | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          criteria?: Json | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      event_participants: {
+        Row: {
+          event_id: string
+          id: string
+          joined_at: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          event_id: string
+          id?: string
+          joined_at?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          event_id?: string
+          id?: string
+          joined_at?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_participants_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_participants_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          description: string | null
+          end_date: string | null
+          id: string
+          is_active: boolean | null
+          location: string | null
+          start_date: string
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          location?: string | null
+          start_date: string
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          location?: string | null
+          start_date?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       forum_posts: {
         Row: {
           author_id: string
@@ -153,6 +263,44 @@ export type Database = {
           },
         ]
       }
+      message_attachments: {
+        Row: {
+          file_name: string
+          file_size: number | null
+          file_type: string | null
+          file_url: string
+          id: string
+          message_id: string
+          uploaded_at: string | null
+        }
+        Insert: {
+          file_name: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url: string
+          id?: string
+          message_id: string
+          uploaded_at?: string | null
+        }
+        Update: {
+          file_name?: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          message_id?: string
+          uploaded_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_attachments_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "private_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       military_archive: {
         Row: {
           category: string | null
@@ -191,6 +339,170 @@ export type Database = {
           {
             foreignKeyName: "military_archive_uploaded_by_fkey"
             columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          related_id: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          related_id?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          related_id?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      poll_votes: {
+        Row: {
+          id: string
+          option_index: number
+          poll_id: string
+          user_id: string
+          voted_at: string | null
+        }
+        Insert: {
+          id?: string
+          option_index: number
+          poll_id: string
+          user_id: string
+          voted_at?: string | null
+        }
+        Update: {
+          id?: string
+          option_index?: number
+          poll_id?: string
+          user_id?: string
+          voted_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "poll_votes_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "polls"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "poll_votes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      polls: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          expires_at: string | null
+          id: string
+          options: Json
+          question: string
+          thread_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          expires_at?: string | null
+          id?: string
+          options: Json
+          question: string
+          thread_id: string
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          expires_at?: string | null
+          id?: string
+          options?: Json
+          question?: string
+          thread_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "polls_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "polls_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "forum_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_reactions: {
+        Row: {
+          created_at: string | null
+          id: string
+          post_id: string
+          reaction_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          post_id: string
+          reaction_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          post_id?: string
+          reaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_reactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "forum_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_reactions_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -246,34 +558,148 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bio: string | null
+          display_name: string | null
           id: string
           joined_at: string | null
           last_seen: string | null
           posts_count: number | null
           rank: Database["public"]["Enums"]["user_rank"] | null
+          reputation_score: number | null
+          show_email: boolean | null
+          show_last_online: boolean | null
+          signature: string | null
+          theme_preference: string | null
           username: string
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          display_name?: string | null
           id: string
           joined_at?: string | null
           last_seen?: string | null
           posts_count?: number | null
           rank?: Database["public"]["Enums"]["user_rank"] | null
+          reputation_score?: number | null
+          show_email?: boolean | null
+          show_last_online?: boolean | null
+          signature?: string | null
+          theme_preference?: string | null
           username: string
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          display_name?: string | null
           id?: string
           joined_at?: string | null
           last_seen?: string | null
           posts_count?: number | null
           rank?: Database["public"]["Enums"]["user_rank"] | null
+          reputation_score?: number | null
+          show_email?: boolean | null
+          show_last_online?: boolean | null
+          signature?: string | null
+          theme_preference?: string | null
           username?: string
         }
         Relationships: []
+      }
+      reports: {
+        Row: {
+          assigned_to: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          reason: string
+          reporter_id: string
+          resolution_notes: string | null
+          resolved_at: string | null
+          status: string | null
+          target_id: string
+          target_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          reason: string
+          reporter_id: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          status?: string | null
+          target_id: string
+          target_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          reason?: string
+          reporter_id?: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          status?: string | null
+          target_id?: string
+          target_type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_badges: {
+        Row: {
+          badge_id: string
+          earned_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          badge_id: string
+          earned_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          badge_id?: string
+          earned_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_badges_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_bans: {
         Row: {

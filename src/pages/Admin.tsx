@@ -7,11 +7,15 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, ArrowLeft, User as UserIcon } from "lucide-react";
+import { Shield, ArrowLeft, User as UserIcon, BarChart3, FileText, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AuditLogViewer } from "@/components/admin/AuditLogViewer";
 import { UserSessionTracker } from "@/components/admin/UserSessionTracker";
 import { UserBanManager } from "@/components/admin/UserBanManager";
+import { ActivityChart } from "@/components/analytics/ActivityChart";
+import { UserActivityView } from "@/components/admin/UserActivityView";
+import { BulkActions } from "@/components/admin/BulkActions";
+import { ReportQueue } from "@/components/admin/ReportQueue";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -182,8 +186,10 @@ const Admin = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="users" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="users">Users & Roles</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="users">Użytkownicy</TabsTrigger>
+            <TabsTrigger value="analytics">Analityka</TabsTrigger>
+            <TabsTrigger value="reports">Zgłoszenia</TabsTrigger>
             <TabsTrigger value="sessions">IP Tracking</TabsTrigger>
             <TabsTrigger value="audit">Audit Log</TabsTrigger>
           </TabsList>
@@ -275,6 +281,18 @@ const Admin = () => {
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-6">
+            <ActivityChart />
+            <div className="grid gap-6 md:grid-cols-2">
+              <UserActivityView />
+              <BulkActions />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="reports">
+            <ReportQueue />
           </TabsContent>
 
           <TabsContent value="sessions">
