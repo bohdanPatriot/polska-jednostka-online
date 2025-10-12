@@ -10,6 +10,7 @@ import Category from "./pages/Category";
 import NewThread from "./pages/NewThread";
 import Thread from "./pages/Thread";
 import Admin from "./pages/Admin";
+import Moderator from "./pages/Moderator";
 import Profile from "./pages/Profile";
 import Events from "./pages/Events";
 import NotFound from "./pages/NotFound";
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/category/:categoryId/new" element={<NewThread />} />
           <Route path="/thread/:threadId" element={<Thread />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/moderator" element={<Moderator />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/events" element={<Events />} />
           <Route path="*" element={<NotFound />} />

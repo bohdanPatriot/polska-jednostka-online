@@ -21,6 +21,7 @@ const Forum = () => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isModerator, setIsModerator] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -29,6 +30,7 @@ const Forum = () => {
       } else {
         setUser(session.user);
         fetchProfile(session.user.id);
+        trackSession();
       }
     });
 
@@ -43,6 +45,14 @@ const Forum = () => {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  const trackSession = async () => {
+    try {
+      await supabase.functions.invoke("track-session");
+    } catch (error) {
+      console.error("Failed to track session:", error);
+    }
+  };
 
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase
@@ -61,6 +71,7 @@ const Forum = () => {
       .eq("user_id", userId);
 
     setIsAdmin(roles?.some(r => r.role === "admin") || false);
+    setIsModerator(roles?.some(r => r.role === "moderator") || false);
   };
 
   const handleSignOut = async () => {
@@ -102,7 +113,7 @@ const Forum = () => {
             {profile && (
               <div className="flex items-center gap-2">
                 <UserIcon className="h-5 w-5 text-muted-foreground" />
-                <span className="font-medium">{profile.username}</span>
+                <span className="font-medium">{profile.display_name || profile.username}</span>
                 <Badge variant="outline">{getRankDisplay(profile.rank)}</Badge>
               </div>
             )}
@@ -118,7 +129,13 @@ const Forum = () => {
             {isAdmin && (
               <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
                 <Settings className="h-4 w-4 mr-2" />
-                Admin
+                Panel Admin
+              </Button>
+            )}
+            {isModerator && !isAdmin && (
+              <Button variant="outline" size="sm" onClick={() => navigate("/moderator")}>
+                <Settings className="h-4 w-4 mr-2" />
+                Panel Moderatora
               </Button>
             )}
             <Button variant="outline" size="sm" onClick={handleSignOut}>

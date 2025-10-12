@@ -64,11 +64,14 @@ export function UserBanManager({ userId, username, onBanComplete }: UserBanManag
         banned_by: user.id,
         ban_type: banType,
         reason: reason,
-        end_date: endDate?.toISOString(),
+        end_date: endDate?.toISOString() || null,
         is_active: true,
       });
 
-      if (banError) throw banError;
+      if (banError) {
+        console.error("Ban error:", banError);
+        throw banError;
+      }
 
       // Log the admin action
       await supabase.rpc("log_admin_action", {
@@ -120,29 +123,15 @@ export function UserBanManager({ userId, username, onBanComplete }: UserBanManag
         p_reason: "Permanent deletion",
       });
 
-      // Delete user's posts
-      const { error: postsError } = await supabase
-        .from("forum_posts")
-        .delete()
-        .eq("author_id", userId);
+      // Use service role to delete user data
+      const { error: deleteError } = await supabase.functions.invoke("delete-user", {
+        body: { userId }
+      });
 
-      if (postsError) throw postsError;
-
-      // Delete user's threads
-      const { error: threadsError } = await supabase
-        .from("forum_threads")
-        .delete()
-        .eq("author_id", userId);
-
-      if (threadsError) throw threadsError;
-
-      // Delete profile (cascades to auth.users)
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .delete()
-        .eq("id", userId);
-
-      if (profileError) throw profileError;
+      if (deleteError) {
+        console.error("Delete error:", deleteError);
+        throw deleteError;
+      }
 
       toast({
         title: "Success",

@@ -46,7 +46,7 @@ const Admin = () => {
     if (!hasAdminRole) {
       toast({
         title: "Brak dostępu",
-        description: "Nie masz uprawnień administratora",
+        description: "Tylko administratorzy mają dostęp do tego panelu",
         variant: "destructive",
       });
       navigate("/forum");

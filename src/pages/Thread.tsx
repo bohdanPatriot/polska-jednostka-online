@@ -9,6 +9,8 @@ import { ArrowLeft, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ModerationControls } from "@/components/ModerationControls";
 import { PostModerationControls } from "@/components/PostModerationControls";
+import { ReportButton } from "@/components/ReportButton";
+import { PostReactions } from "@/components/reactions/PostReactions";
 
 const Thread = () => {
   const { threadId } = useParams();
@@ -163,7 +165,7 @@ const Thread = () => {
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <Card className="mb-6">
           <CardHeader>
-            <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
                   {thread.is_pinned && <Badge variant="secondary">Przypięty</Badge>}
@@ -174,12 +176,15 @@ const Thread = () => {
                   przez {thread.profiles?.username} • {formatDate(thread.created_at)}
                 </p>
               </div>
-              <ModerationControls
-                threadId={threadId!}
-                isPinned={thread.is_pinned}
-                isLocked={thread.is_locked}
-                onUpdate={fetchThread}
-              />
+              <div className="flex items-center gap-2">
+                <ReportButton targetId={threadId!} targetType="thread" />
+                <ModerationControls
+                  threadId={threadId!}
+                  isPinned={thread.is_pinned}
+                  isLocked={thread.is_locked}
+                  onUpdate={fetchThread}
+                />
+              </div>
             </div>
           </CardHeader>
         </Card>
@@ -199,6 +204,7 @@ const Thread = () => {
                     <p className="text-sm text-muted-foreground">
                       {index === 0 ? "Pierwotny post" : `#${index + 1}`} • {formatDate(post.created_at)}
                     </p>
+                    <ReportButton targetId={post.id} targetType="post" />
                     <PostModerationControls
                       postId={post.id}
                       authorId={post.author_id}
@@ -207,8 +213,9 @@ const Thread = () => {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 <p className="whitespace-pre-wrap">{post.content}</p>
+                <PostReactions postId={post.id} />
               </CardContent>
             </Card>
           ))}
