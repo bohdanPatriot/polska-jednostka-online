@@ -195,7 +195,12 @@ const Thread = () => {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-semibold">{post.profiles?.username}</p>
+                    <button
+                      onClick={() => navigate(`/profile/${post.author_id}`)}
+                      className="font-semibold hover:underline cursor-pointer text-left"
+                    >
+                      {post.profiles?.username}
+                    </button>
                     <Badge variant="outline" className="mt-1">
                       {getRankDisplay(post.profiles?.rank)}
                     </Badge>

@@ -112,7 +112,17 @@ const Category = () => {
                       </div>
                       <CardTitle className="font-military mb-1">{thread.title}</CardTitle>
                       <CardDescription>
-                        przez {thread.profiles?.username} • {formatDate(thread.created_at)}
+                        przez{" "}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/profile/${thread.author_id}`);
+                          }}
+                          className="hover:underline cursor-pointer"
+                        >
+                          {thread.profiles?.username}
+                        </button>
+                        {" • "}{formatDate(thread.created_at)}
                       </CardDescription>
                     </div>
                   </div>

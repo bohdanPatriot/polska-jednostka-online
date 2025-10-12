@@ -12,6 +12,7 @@ import Thread from "./pages/Thread";
 import Admin from "./pages/Admin";
 import Moderator from "./pages/Moderator";
 import Profile from "./pages/Profile";
+import PublicProfile from "./pages/PublicProfile";
 import Events from "./pages/Events";
 import NotFound from "./pages/NotFound";
 
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/admin" element={<Admin />} />
           <Route path="/moderator" element={<Moderator />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:userId" element={<PublicProfile />} />
           <Route path="/events" element={<Events />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
