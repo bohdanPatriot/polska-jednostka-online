@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, User, Calendar, MessageSquare, Award } from "lucide-react";
+import { ArrowLeft, User, Calendar, MessageSquare, Award, BookOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const PublicProfile = () => {
@@ -13,12 +13,14 @@ const PublicProfile = () => {
   const { toast } = useToast();
   const [profile, setProfile] = useState<any>(null);
   const [badges, setBadges] = useState<any[]>([]);
+  const [blogPosts, setBlogPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (userId) {
       fetchProfile();
       fetchBadges();
+      fetchBlogPosts();
     }
   }, [userId]);
 
@@ -58,6 +60,23 @@ const PublicProfile = () => {
       }
     } catch (error) {
       console.error("Failed to fetch badges:", error);
+    }
+  };
+
+  const fetchBlogPosts = async () => {
+    try {
+      const { data } = await supabase
+        .from("user_blog_posts")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("is_published", true)
+        .order("created_at", { ascending: false });
+
+      if (data) {
+        setBlogPosts(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch blog posts:", error);
     }
   };
 
@@ -114,9 +133,17 @@ const PublicProfile = () => {
         <Card className="mb-6">
           <CardHeader>
             <div className="flex items-start gap-4">
-              <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center">
-                <User className="h-10 w-10 text-primary" />
-              </div>
+              {profile.avatar_url ? (
+                <img
+                  src={profile.avatar_url}
+                  alt={profile.display_name || profile.username}
+                  className="h-20 w-20 rounded-full object-cover"
+                />
+              ) : (
+                <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center">
+                  <User className="h-10 w-10 text-primary" />
+                </div>
+              )}
               <div className="flex-1">
                 <CardTitle className="text-3xl font-military mb-2">
                   {profile.display_name || profile.username}
@@ -178,10 +205,43 @@ const PublicProfile = () => {
               <div className="pt-4 border-t">
                 <h3 className="font-semibold mb-2">Sygnatura</h3>
                 <p className="text-sm text-muted-foreground italic">{profile.signature}</p>
+                {profile.signature_image_url && (
+                  <img
+                    src={profile.signature_image_url}
+                    alt="Signature"
+                    className="mt-2 max-h-16 object-contain"
+                  />
+                )}
               </div>
             )}
           </CardContent>
         </Card>
+
+        {blogPosts.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5" />
+                Blog
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {blogPosts.map((post) => (
+                  <div key={post.id} className="border-b pb-4 last:border-0">
+                    <h3 className="font-semibold mb-2">{post.title}</h3>
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                      {post.content}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {new Date(post.created_at).toLocaleDateString("pl-PL")}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </main>
     </div>
   );

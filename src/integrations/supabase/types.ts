@@ -568,6 +568,7 @@ export type Database = {
           show_email: boolean | null
           show_last_online: boolean | null
           signature: string | null
+          signature_image_url: string | null
           theme_preference: string | null
           username: string
         }
@@ -584,6 +585,7 @@ export type Database = {
           show_email?: boolean | null
           show_last_online?: boolean | null
           signature?: string | null
+          signature_image_url?: string | null
           theme_preference?: string | null
           username: string
         }
@@ -600,6 +602,7 @@ export type Database = {
           show_email?: boolean | null
           show_last_online?: boolean | null
           signature?: string | null
+          signature_image_url?: string | null
           theme_preference?: string | null
           username?: string
         }
@@ -735,6 +738,36 @@ export type Database = {
           is_active?: boolean | null
           reason?: string
           start_date?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_blog_posts: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          is_published: boolean | null
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          is_published?: boolean | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_published?: boolean | null
+          title?: string
           updated_at?: string | null
           user_id?: string
         }
