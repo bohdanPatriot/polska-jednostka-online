@@ -8,97 +8,123 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 7%;
-    --foreground: 120 5% 85%;
-
-    --card: 120 15% 12%;
-    --card-foreground: 120 5% 90%;
-
-    --popover: 120 20% 10%;
-    --popover-foreground: 120 5% 90%;
-
-    --primary: 120 25% 20%;
-    --primary-foreground: 120 5% 95%;
-
-    --secondary: 0 0% 25%;
-    --secondary-foreground: 0 0% 90%;
-
-    --muted: 120 10% 18%;
-    --muted-foreground: 120 5% 60%;
-
-    --accent: 120 30% 25%;
-    --accent-foreground: 120 5% 95%;
-
-    --destructive: 0 65% 45%;
+    /* Tactical Military Design System */
+    /* Deep olive greens, charcoal grays, with amber gold accents */
+    
+    --background: 120 8% 12%;
+    --foreground: 60 5% 90%;
+    
+    --card: 120 10% 15%;
+    --card-foreground: 60 5% 90%;
+    
+    --popover: 120 12% 18%;
+    --popover-foreground: 60 5% 92%;
+    
+    /* Olive drab primary color */
+    --primary: 85 35% 35%;
+    --primary-foreground: 60 8% 95%;
+    
+    /* Darker tactical secondary */
+    --secondary: 85 15% 25%;
+    --secondary-foreground: 60 8% 92%;
+    
+    /* Muted tactical gray */
+    --muted: 120 8% 22%;
+    --muted-foreground: 60 3% 65%;
+    
+    /* Amber/gold accent for highlights and CTAs */
+    --accent: 45 85% 55%;
+    --accent-foreground: 85 25% 12%;
+    
+    /* Military red for alerts */
+    --destructive: 0 75% 45%;
     --destructive-foreground: 0 0% 98%;
+    
+    --border: 120 10% 25%;
+    --input: 120 10% 20%;
+    --ring: 85 35% 45%;
+    
+    --radius: 0.4rem;
+    
+    /* Sidebar colors */
+    --sidebar-background: 120 12% 10%;
+    --sidebar-foreground: 60 5% 85%;
+    --sidebar-primary: 85 35% 35%;
+    --sidebar-primary-foreground: 60 8% 95%;
+    --sidebar-accent: 120 10% 18%;
+    --sidebar-accent-foreground: 60 5% 90%;
+    --sidebar-border: 120 12% 20%;
+    --sidebar-ring: 85 35% 45%;
 
-    --border: 120 15% 20%;
-    --input: 120 15% 20%;
-    --ring: 120 30% 35%;
-
-    --radius: 0.25rem;
-
-    --sidebar-background: 120 20% 10%;
-    --sidebar-foreground: 120 5% 85%;
-    --sidebar-primary: 120 25% 18%;
-    --sidebar-primary-foreground: 120 5% 95%;
-    --sidebar-accent: 120 20% 15%;
-    --sidebar-accent-foreground: 120 5% 90%;
-    --sidebar-border: 120 15% 18%;
-    --sidebar-ring: 120 30% 35%;
-
-    /* Military-specific design tokens */
-    --military-green: 120 25% 20%;
-    --military-green-light: 120 30% 30%;
-    --military-green-dark: 120 25% 15%;
-    --military-gray: 0 0% 25%;
-    --military-gray-light: 0 0% 35%;
-    --military-gray-dark: 0 0% 15%;
+    /* Custom military design tokens */
+    --military-olive: 85 35% 35%;
+    --military-olive-light: 85 30% 45%;
+    --military-olive-dark: 85 40% 25%;
+    
+    --tactical-gray: 120 8% 22%;
+    --tactical-gray-light: 120 8% 32%;
+    --tactical-gray-dark: 120 10% 15%;
+    
+    --command-gold: 45 85% 55%;
+    --command-gold-glow: 45 95% 65%;
     
     --rank-bronze: 30 60% 45%;
-    --rank-silver: 0 0% 65%;
-    --rank-gold: 45 90% 55%;
+    --rank-silver: 0 0% 75%;
+    --rank-gold: 45 90% 60%;
     
-    --shadow-military: 0 0 20px -5px hsl(120 25% 10% / 0.5);
+    /* Military green variations */
+    --military-green: 85 35% 35%;
+    --military-green-light: 85 30% 45%;
+    --military-green-dark: 85 40% 25%;
+    --military-gray: 120 8% 22%;
+    --military-gray-light: 120 8% 32%;
+    --military-gray-dark: 120 10% 15%;
+    
+    /* Shadows and effects */
+    --shadow-tactical: 0 8px 24px hsl(120 20% 5% / 0.6);
+    --shadow-command: 0 0 30px hsl(45 85% 55% / 0.3);
+    --shadow-military: 0 0 20px hsl(120 25% 10% / 0.5);
+    --glow-primary: 0 0 20px hsl(85 35% 45% / 0.4);
   }
 
   .dark {
-    --background: 0 0% 7%;
-    --foreground: 120 5% 85%;
-
-    --card: 120 15% 12%;
-    --card-foreground: 120 5% 90%;
-
-    --popover: 120 20% 10%;
-    --popover-foreground: 120 5% 90%;
-
-    --primary: 120 25% 20%;
-    --primary-foreground: 120 5% 95%;
-
-    --secondary: 0 0% 25%;
-    --secondary-foreground: 0 0% 90%;
-
-    --muted: 120 10% 18%;
-    --muted-foreground: 120 5% 60%;
-
-    --accent: 120 30% 25%;
-    --accent-foreground: 120 5% 95%;
-
-    --destructive: 0 65% 45%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 120 15% 20%;
-    --input: 120 15% 20%;
-    --ring: 120 30% 35%;
+    /* Enhanced dark mode for night operations */
+    --background: 120 12% 8%;
+    --foreground: 60 5% 92%;
     
-    --sidebar-background: 120 20% 10%;
-    --sidebar-foreground: 120 5% 85%;
-    --sidebar-primary: 120 25% 18%;
-    --sidebar-primary-foreground: 120 5% 95%;
-    --sidebar-accent: 120 20% 15%;
-    --sidebar-accent-foreground: 120 5% 90%;
-    --sidebar-border: 120 15% 18%;
-    --sidebar-ring: 120 30% 35%;
+    --card: 120 14% 12%;
+    --card-foreground: 60 5% 92%;
+    
+    --popover: 120 15% 14%;
+    --popover-foreground: 60 5% 94%;
+    
+    --primary: 85 38% 38%;
+    --primary-foreground: 60 8% 96%;
+    
+    --secondary: 85 18% 22%;
+    --secondary-foreground: 60 8% 94%;
+    
+    --muted: 120 10% 18%;
+    --muted-foreground: 60 4% 60%;
+    
+    --accent: 45 88% 58%;
+    --accent-foreground: 85 30% 10%;
+    
+    --destructive: 0 78% 48%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 120 12% 22%;
+    --input: 120 12% 16%;
+    --ring: 85 38% 48%;
+    
+    --sidebar-background: 120 15% 8%;
+    --sidebar-foreground: 60 5% 88%;
+    --sidebar-primary: 85 38% 38%;
+    --sidebar-primary-foreground: 60 8% 96%;
+    --sidebar-accent: 120 12% 15%;
+    --sidebar-accent-foreground: 60 5% 92%;
+    --sidebar-border: 120 14% 18%;
+    --sidebar-ring: 85 38% 48%;
   }
 }
 
@@ -108,6 +134,111 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+  
+  /* Military-inspired typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-wide;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  /* Tactical borders and shadows */
+  .card-tactical {
+    background: linear-gradient(180deg, hsl(var(--card)), hsl(var(--tactical-gray-dark)));
+    border: 1px solid hsl(var(--border));
+    box-shadow: var(--shadow-tactical);
+  }
+  
+  /* Command highlight effect */
+  .command-highlight {
+    position: relative;
+    background: linear-gradient(135deg, hsl(45, 85%, 55%), hsl(45, 85%, 45%));
+    box-shadow: var(--shadow-command);
+  }
+  
+  .command-highlight::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(135deg, hsl(45, 85%, 55%), hsl(45, 85%, 45%));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+  
+  /* Rank badges with glow */
+  .rank-badge {
+    background: linear-gradient(90deg, hsl(85, 35%, 35%), hsl(85, 40%, 45%));
+    box-shadow: 0 0 15px hsl(85 35% 45% / 0.3);
+    border: 1px solid hsl(85, 35%, 50%);
+  }
+  
+  /* Verified badge style */
+  .verified-badge {
+    filter: drop-shadow(0 0 8px hsl(45, 85%, 55%));
+  }
+  
+  /* Tactical input styling */
+  input, textarea, select {
+    @apply bg-input border-border;
+    transition: all 0.2s ease;
+  }
+  
+  input:focus, textarea:focus, select:focus {
+    @apply border-primary ring-2 ring-primary/20;
+    box-shadow: 0 0 12px hsla(85, 35%, 35%, 0.2);
+  }
+  
+  /* Military button variants */
+  .btn-command {
+    background: linear-gradient(135deg, hsl(45, 85%, 55%), hsl(45, 85%, 45%));
+    color: hsl(85, 25%, 12%);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-command:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-command), 0 4px 12px hsl(45 85% 55% / 0.4);
+  }
+  
+  /* Scrollbar styling for tactical aesthetic */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--tactical-gray-dark));
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--military-olive));
+    border-radius: 5px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--military-olive-light));
+  }
+  
+  /* Gradients (defined as utilities for reuse) */
+  .gradient-command {
+    background: linear-gradient(135deg, hsl(45, 85%, 55%), hsl(45, 85%, 45%));
+  }
+  
+  .gradient-tactical {
+    background: linear-gradient(180deg, hsl(120, 10%, 18%), hsl(120, 12%, 15%));
+  }
+  
+  .gradient-rank {
+    background: linear-gradient(90deg, hsl(85, 35%, 35%), hsl(85, 40%, 45%));
   }
 }

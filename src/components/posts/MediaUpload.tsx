@@ -54,13 +54,13 @@ export function MediaUpload({ postId, onUploadComplete }: MediaUploadProps) {
                        file.type.startsWith("audio/") ? "audio" : "file";
 
       if (postId) {
-        const { error: dbError } = await supabase.from("post_attachments").insert({
+        const { error: dbError } = await supabase.from("post_attachments" as any).insert({
           post_id: postId,
           file_url: publicUrl,
           file_type: fileType,
           file_name: file.name,
           file_size: file.size,
-        });
+        } as any);
 
         if (dbError) throw dbError;
       }

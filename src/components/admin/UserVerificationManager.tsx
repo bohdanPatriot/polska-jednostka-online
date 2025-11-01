@@ -31,7 +31,7 @@ export function UserVerificationManager() {
       .order("username", { ascending: true });
 
     if (!error && data) {
-      setProfiles(data);
+      setProfiles(data as any);
     }
   };
 
@@ -40,7 +40,7 @@ export function UserVerificationManager() {
     try {
       const { error } = await supabase
         .from("profiles")
-        .update({ is_verified: !currentStatus })
+        .update({ is_verified: !currentStatus } as any)
         .eq("id", userId);
 
       if (error) throw error;
