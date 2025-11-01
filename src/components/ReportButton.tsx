@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +29,13 @@ interface ReportButtonProps {
   size?: "sm" | "default";
 }
 
+const reportSchema = z.object({
+  reason: z.enum(['spam', 'harassment', 'inappropriate', 'misinformation', 'other']),
+  description: z.string().trim().max(1000, "Opis nie może być dłuższy niż 1000 znaków").optional(),
+  targetType: z.enum(['thread', 'post', 'user']),
+  targetId: z.string().uuid()
+});
+
 export function ReportButton({ targetId, targetType, size = "sm" }: ReportButtonProps) {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
@@ -47,15 +55,23 @@ export function ReportButton({ targetId, targetType, size = "sm" }: ReportButton
 
     setLoading(true);
     try {
+      // Validate input
+      const validated = reportSchema.parse({
+        reason: reason as any,
+        description: description,
+        targetType: targetType,
+        targetId: targetId
+      });
+
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Nie jesteś zalogowany");
 
       const { error } = await supabase.from("reports").insert({
         reporter_id: user.id,
-        target_id: targetId,
-        target_type: targetType,
-        reason: reason,
-        description: description,
+        target_id: validated.targetId,
+        target_type: validated.targetType,
+        reason: validated.reason,
+        description: validated.description || "",
         status: "pending",
       });
 

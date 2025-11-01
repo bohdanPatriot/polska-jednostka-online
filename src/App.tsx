@@ -15,6 +15,7 @@ import Profile from "./pages/Profile";
 import PublicProfile from "./pages/PublicProfile";
 import Events from "./pages/Events";
 import NotFound from "./pages/NotFound";
+import Messages from "./pages/Messages";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:userId" element={<PublicProfile />} />
           <Route path="/events" element={<Events />} />
+          <Route path="/messages" element={<Messages />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

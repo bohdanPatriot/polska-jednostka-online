@@ -16,6 +16,7 @@ import { ActivityChart } from "@/components/analytics/ActivityChart";
 import { UserActivityView } from "@/components/admin/UserActivityView";
 import { BulkActions } from "@/components/admin/BulkActions";
 import { ReportQueue } from "@/components/admin/ReportQueue";
+import { UserVerificationManager } from "@/components/admin/UserVerificationManager";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -201,7 +202,10 @@ const Admin = () => {
                 <CardDescription>Przypisuj role i blokuj użytkowników forum</CardDescription>
               </CardHeader>
               <CardContent>
-                <Table>
+                <UserVerificationManager />
+                <div className="mt-8">
+                  <h3 className="text-lg font-semibold mb-4">Role i Stopnie</h3>
+                  <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Użytkownik</TableHead>
@@ -279,6 +283,7 @@ const Admin = () => {
                     ))}
                   </TableBody>
                 </Table>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
