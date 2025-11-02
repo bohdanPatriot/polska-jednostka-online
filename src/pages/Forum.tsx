@@ -5,7 +5,7 @@ import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, MessageSquare, FileText, Newspaper, MessageCircle, LogOut, User as UserIcon, Settings, Calendar, Mail } from "lucide-react";
+import { Shield, MessageSquare, FileText, Newspaper, MessageCircle, LogOut, User as UserIcon, Settings, Calendar, Mail, CheckCircle2 } from "lucide-react";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 
 const categories = [
@@ -114,6 +114,9 @@ const Forum = () => {
               <div className="flex items-center gap-2">
                 <UserIcon className="h-5 w-5 text-muted-foreground" />
                 <span className="font-medium">{profile.display_name || profile.username}</span>
+                {profile.is_verified && (
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
+                )}
                 <Badge variant="outline">{getRankDisplay(profile.rank)}</Badge>
               </div>
             )}

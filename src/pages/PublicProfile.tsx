@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, User, Calendar, MessageSquare, Award, BookOpen } from "lucide-react";
+import { ArrowLeft, User, Calendar, MessageSquare, Award, BookOpen, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const PublicProfile = () => {
@@ -121,10 +121,14 @@ const PublicProfile = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-3">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Powrót
+          </Button>
+          <Button onClick={() => navigate('/messages')} variant="default" size="sm">
+            <MessageSquare className="h-4 w-4 mr-2" />
+            Wyślij wiadomość
           </Button>
         </div>
       </header>
@@ -145,9 +149,14 @@ const PublicProfile = () => {
                 </div>
               )}
               <div className="flex-1">
-                <CardTitle className="text-3xl font-military mb-2">
-                  {profile.display_name || profile.username}
-                </CardTitle>
+                <div className="flex items-center gap-2 mb-2">
+                  <CardTitle className="text-3xl font-military">
+                    {profile.display_name || profile.username}
+                  </CardTitle>
+                  {profile.is_verified && (
+                    <CheckCircle2 className="h-6 w-6 text-primary" />
+                  )}
+                </div>
                 {profile.display_name && profile.display_name !== profile.username && (
                   <p className="text-muted-foreground mb-2">@{profile.username}</p>
                 )}

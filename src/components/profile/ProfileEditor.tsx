@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { User, Upload, Image as ImageIcon } from "lucide-react";
+import { User, Upload, Image as ImageIcon, CheckCircle2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 
 export function ProfileEditor() {
@@ -14,6 +14,7 @@ export function ProfileEditor() {
   const [signature, setSignature] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [signatureImageUrl, setSignatureImageUrl] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -30,7 +31,7 @@ export function ProfileEditor() {
 
     const { data } = await supabase
       .from("profiles")
-      .select("display_name, bio, signature, avatar_url, signature_image_url")
+      .select("display_name, bio, signature, avatar_url, signature_image_url, is_verified")
       .eq("id", user.id)
       .single();
 
@@ -40,6 +41,7 @@ export function ProfileEditor() {
       setSignature(data.signature || "");
       setAvatarUrl(data.avatar_url || "");
       setSignatureImageUrl(data.signature_image_url || "");
+      setIsVerified(data.is_verified || false);
     }
   };
 
@@ -161,10 +163,18 @@ export function ProfileEditor() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <User className="h-5 w-5" />
-          Edytuj profil
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <User className="h-5 w-5" />
+            Edytuj profil
+          </CardTitle>
+          {isVerified && (
+            <div className="flex items-center gap-2 text-primary">
+              <CheckCircle2 className="h-5 w-5" />
+              <span className="text-sm font-medium">Zweryfikowany</span>
+            </div>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>

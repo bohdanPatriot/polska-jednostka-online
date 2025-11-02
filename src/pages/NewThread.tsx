@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { MediaUpload } from "@/components/posts/MediaUpload";
 
 const NewThread = () => {
   const { categoryId } = useParams();
@@ -17,6 +18,7 @@ const NewThread = () => {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [firstPostId, setFirstPostId] = useState<string | null>(null);
 
   const categoryNames: { [key: string]: string } = {
     historia: "Historia",
@@ -64,13 +66,15 @@ const NewThread = () => {
     }
 
     // Create first post
-    const { error: postError } = await supabase
+    const { data: post, error: postError } = await supabase
       .from("forum_posts")
       .insert({
         thread_id: thread.id,
         author_id: userId,
         content,
-      });
+      })
+      .select()
+      .single();
 
     if (postError) {
       toast({
@@ -81,6 +85,8 @@ const NewThread = () => {
       setLoading(false);
       return;
     }
+
+    setFirstPostId(post.id);
 
     toast({
       title: "Sukces",
@@ -132,6 +138,13 @@ const NewThread = () => {
                   required
                 />
               </div>
+              
+              {firstPostId && (
+                <div className="space-y-2">
+                  <Label>Załączniki (opcjonalnie)</Label>
+                  <MediaUpload postId={firstPostId} />
+                </div>
+              )}
               <div className="flex gap-3">
                 <Button type="submit" disabled={loading}>
                   {loading ? "Tworzenie..." : "Utwórz wątek"}

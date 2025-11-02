@@ -11,6 +11,8 @@ import { ModerationControls } from "@/components/ModerationControls";
 import { PostModerationControls } from "@/components/PostModerationControls";
 import { ReportButton } from "@/components/ReportButton";
 import { PostReactions } from "@/components/reactions/PostReactions";
+import { MediaUpload } from "@/components/posts/MediaUpload";
+import { CheckCircle2 } from "lucide-react";
 
 const Thread = () => {
   const { threadId } = useParams();
@@ -22,6 +24,7 @@ const Thread = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [currentPostId, setCurrentPostId] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -63,7 +66,8 @@ const Thread = () => {
       .from("forum_posts")
       .select(`
         *,
-        profiles:author_id (username, rank)
+        profiles:author_id (username, rank, is_verified),
+        post_attachments (*)
       `)
       .eq("thread_id", threadId)
       .order("created_at", { ascending: true });
@@ -85,13 +89,15 @@ const Thread = () => {
 
     setSubmitting(true);
 
-    const { error } = await supabase
+    const { data: post, error } = await supabase
       .from("forum_posts")
       .insert({
         thread_id: threadId,
         author_id: userId,
         content: newPost,
-      });
+      })
+      .select()
+      .single();
 
     if (error) {
       toast({
@@ -100,6 +106,7 @@ const Thread = () => {
         variant: "destructive",
       });
     } else {
+      setCurrentPostId(post.id);
       setNewPost("");
       fetchPosts();
       toast({
@@ -195,12 +202,17 @@ const Thread = () => {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
-                    <button
-                      onClick={() => navigate(`/profile/${post.author_id}`)}
-                      className="font-semibold hover:underline cursor-pointer text-left"
-                    >
-                      {post.profiles?.username}
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => navigate(`/profile/${post.author_id}`)}
+                        className="font-semibold hover:underline cursor-pointer text-left"
+                      >
+                        {post.profiles?.username}
+                      </button>
+                      {post.profiles?.is_verified && (
+                        <CheckCircle2 className="h-4 w-4 text-primary" />
+                      )}
+                    </div>
                     <Badge variant="outline" className="mt-1">
                       {getRankDisplay(post.profiles?.rank)}
                     </Badge>
@@ -220,6 +232,25 @@ const Thread = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="whitespace-pre-wrap">{post.content}</p>
+                
+                {post.post_attachments && post.post_attachments.length > 0 && (
+                  <div className="grid grid-cols-2 gap-2 mt-4">
+                    {post.post_attachments.map((attachment: any) => (
+                      <div key={attachment.id}>
+                        {attachment.file_type === 'image' && (
+                          <img src={attachment.file_url} alt={attachment.file_name} className="rounded border" />
+                        )}
+                        {attachment.file_type === 'video' && (
+                          <video src={attachment.file_url} controls className="rounded border w-full" />
+                        )}
+                        {attachment.file_type === 'audio' && (
+                          <audio src={attachment.file_url} controls className="w-full" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
                 <PostReactions postId={post.id} />
               </CardContent>
             </Card>
@@ -243,6 +274,9 @@ const Thread = () => {
                   rows={6}
                   required
                 />
+                {currentPostId && (
+                  <MediaUpload postId={currentPostId} />
+                )}
                 <Button type="submit" disabled={submitting}>
                   {submitting ? "Wysyłanie..." : "Wyślij odpowiedź"}
                 </Button>

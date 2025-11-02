@@ -628,6 +628,7 @@ export type Database = {
           bio: string | null
           display_name: string | null
           id: string
+          is_verified: boolean | null
           joined_at: string | null
           last_seen: string | null
           posts_count: number | null
@@ -645,6 +646,7 @@ export type Database = {
           bio?: string | null
           display_name?: string | null
           id: string
+          is_verified?: boolean | null
           joined_at?: string | null
           last_seen?: string | null
           posts_count?: number | null
@@ -662,6 +664,7 @@ export type Database = {
           bio?: string | null
           display_name?: string | null
           id?: string
+          is_verified?: boolean | null
           joined_at?: string | null
           last_seen?: string | null
           posts_count?: number | null
