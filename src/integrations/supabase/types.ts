@@ -20,7 +20,7 @@ export type Database = {
           admin_id: string
           created_at: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           new_value: Json | null
           old_value: Json | null
           reason: string | null
@@ -32,7 +32,7 @@ export type Database = {
           admin_id: string
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           new_value?: Json | null
           old_value?: Json | null
           reason?: string | null
@@ -44,7 +44,7 @@ export type Database = {
           admin_id?: string
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           new_value?: Json | null
           old_value?: Json | null
           reason?: string | null
@@ -85,6 +85,36 @@ export type Database = {
           icon?: string | null
           id?: string
           name?: string
+        }
+        Relationships: []
+      }
+      direct_messages: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          recipient_id: string
+          sender_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          recipient_id: string
+          sender_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          recipient_id?: string
+          sender_id?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -470,6 +500,44 @@ export type Database = {
           },
         ]
       }
+      post_attachments: {
+        Row: {
+          created_at: string | null
+          file_name: string
+          file_size: number | null
+          file_type: string
+          file_url: string
+          id: string
+          post_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          file_name: string
+          file_size?: number | null
+          file_type: string
+          file_url: string
+          id?: string
+          post_id: string
+        }
+        Update: {
+          created_at?: string | null
+          file_name?: string
+          file_size?: number | null
+          file_type?: string
+          file_url?: string
+          id?: string
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_attachments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "forum_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_reactions: {
         Row: {
           created_at: string | null
@@ -845,14 +913,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      has_role: {
-        Args: { _role: string; _user_id: string }
-        Returns: boolean
-      }
-      is_user_banned: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
+      has_role: { Args: { _role: string; _user_id: string }; Returns: boolean }
+      is_user_banned: { Args: { user_id: string }; Returns: boolean }
       log_admin_action: {
         Args: {
           p_action_type: string

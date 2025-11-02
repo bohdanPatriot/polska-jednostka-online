@@ -52,7 +52,7 @@ export function DirectMessages() {
         {
           event: "*",
           schema: "public",
-          table: "direct_messages" as any,
+          table: "direct_messages",
         },
         () => fetchMessages()
       )
@@ -68,7 +68,7 @@ export function DirectMessages() {
     if (!user) return;
 
     const { data } = await supabase
-      .from("direct_messages" as any)
+      .from("direct_messages")
       .select(`
         *,
         sender:sender_id(username, avatar_url),
@@ -88,11 +88,11 @@ export function DirectMessages() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user || !selectedChat) return;
 
-      const { error } = await supabase.from("direct_messages" as any).insert({
+      const { error } = await supabase.from("direct_messages").insert({
         sender_id: user.id,
         recipient_id: selectedChat,
         content: validated.content,
-      } as any);
+      });
 
       if (error) throw error;
 
