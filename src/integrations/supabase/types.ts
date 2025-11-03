@@ -913,7 +913,47 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      user_session_summary: {
+        Row: {
+          city: string | null
+          country: string | null
+          created_at: string | null
+          id: string | null
+          ip_hash: string | null
+          region: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          city?: never
+          country?: string | null
+          created_at?: string | null
+          id?: string | null
+          ip_hash?: never
+          region?: never
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          city?: never
+          country?: string | null
+          created_at?: string | null
+          id?: string | null
+          ip_hash?: never
+          region?: never
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       has_role: { Args: { _role: string; _user_id: string }; Returns: boolean }

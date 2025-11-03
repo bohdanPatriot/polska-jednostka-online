@@ -35,23 +35,63 @@ export function UserSessionTracker() {
 
   const fetchSessions = async () => {
     try {
-      const { data, error } = await supabase
-        .from("user_sessions")
-        .select(`
-          *,
-          profiles(username)
-        `)
-        .order("created_at", { ascending: false })
-        .limit(50);
+      // Check if user is admin - admins see full data from user_sessions
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
 
-      if (error) throw error;
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id);
 
-      const formattedSessions = data.map((session: any) => ({
-        ...session,
-        username: session.profiles?.username || session.user_sessions_user_id_fkey?.username || "Unknown",
-      }));
+      const isAdmin = roles?.some(r => r.role === "admin");
 
-      setSessions(formattedSessions);
+      if (isAdmin) {
+        // Admins query user_sessions directly for full IP and location data
+        const { data, error } = await supabase
+          .from("user_sessions")
+          .select(`
+            *,
+            profiles(username)
+          `)
+          .order("created_at", { ascending: false })
+          .limit(50);
+
+        if (error) throw error;
+
+        const formattedSessions = data.map((session: any) => ({
+          ...session,
+          username: session.profiles?.username || "Unknown",
+          ip_address: session.ip_address, // Full IP for admins
+        }));
+
+        setSessions(formattedSessions);
+      } else {
+        // Regular users see hashed IP and time-limited location data
+        const { data, error } = await supabase
+          .from("user_session_summary")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(50);
+
+        if (error) throw error;
+
+        // Fetch username separately since view doesn't join profiles
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("username")
+          .eq("id", user.id)
+          .single();
+
+        const formattedSessions = data.map((session: any) => ({
+          ...session,
+          username: profile?.username || "Unknown",
+          ip_address: session.ip_hash, // Hashed IP for users
+        }));
+
+        setSessions(formattedSessions);
+      }
     } catch (error: any) {
       toast({
         title: "Error",
