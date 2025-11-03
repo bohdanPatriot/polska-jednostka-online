@@ -57,7 +57,7 @@ export function ReportButton({ targetId, targetType, size = "sm" }: ReportButton
     try {
       // Validate input
       const validated = reportSchema.parse({
-        reason: reason as any,
+        reason: reason,
         description: description,
         targetType: targetType,
         targetId: targetId
@@ -86,11 +86,19 @@ export function ReportButton({ targetId, targetType, size = "sm" }: ReportButton
       setReason("");
       setDescription("");
     } catch (error: any) {
-      toast({
-        title: "Błąd",
-        description: error.message,
-        variant: "destructive",
-      });
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Błąd walidacji",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Błąd",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
     } finally {
       setLoading(false);
     }
