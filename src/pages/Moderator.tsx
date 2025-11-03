@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ReportQueue } from "@/components/admin/ReportQueue";
 import { ActivityChart } from "@/components/analytics/ActivityChart";
 import { UserActivityView } from "@/components/admin/UserActivityView";
+import { EventManagement } from "@/components/admin/EventManagement";
 
 const Moderator = () => {
   const navigate = useNavigate();
@@ -107,18 +108,7 @@ const Moderator = () => {
           </TabsContent>
 
           <TabsContent value="events">
-            <Card>
-              <CardHeader>
-                <CardTitle className="font-military">Zarządzanie Wydarzeniami</CardTitle>
-                <CardDescription>Przeglądaj i edytuj wydarzenia</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Funkcja zarządzania wydarzeniami będzie dostępna wkrótce.
-                  Moderatorzy będą mogli tworzyć, edytować i usuwać wydarzenia.
-                </p>
-              </CardContent>
-            </Card>
+            <EventManagement />
           </TabsContent>
         </Tabs>
       </main>
