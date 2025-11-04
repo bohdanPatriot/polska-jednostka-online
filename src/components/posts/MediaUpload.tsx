@@ -20,12 +20,60 @@ export function MediaUpload({ postId, onUploadComplete }: MediaUploadProps) {
     if (!files || files.length === 0) return;
 
     const file = files[0];
-    const maxSize = 100 * 1024 * 1024; // 100MB
+    
+    // SECURITY: Strict file validation
+    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB (reduced from 100MB)
+    const ALLOWED_TYPES = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "video/mp4",
+      "video/webm",
+      "audio/mpeg",
+      "audio/wav",
+      "audio/ogg",
+    ];
 
-    if (file.size > maxSize) {
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
       toast({
         title: "Błąd",
-        description: "Plik jest za duży. Maksymalny rozmiar to 100MB.",
+        description: "Plik jest za duży. Maksymalny rozmiar to 50MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file type
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      toast({
+        title: "Błąd",
+        description: `Nieobsługiwany typ pliku. Dozwolone: obrazy (JPEG, PNG, GIF, WebP), wideo (MP4, WebM), audio (MP3, WAV, OGG)`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file extension matches MIME type
+    const fileExt = file.name.split(".").pop()?.toLowerCase();
+    const expectedExts: { [key: string]: string[] } = {
+      "image/jpeg": ["jpg", "jpeg"],
+      "image/png": ["png"],
+      "image/gif": ["gif"],
+      "image/webp": ["webp"],
+      "video/mp4": ["mp4"],
+      "video/webm": ["webm"],
+      "audio/mpeg": ["mp3"],
+      "audio/wav": ["wav"],
+      "audio/ogg": ["ogg"],
+    };
+
+    const validExts = expectedExts[file.type];
+    if (!fileExt || !validExts?.includes(fileExt)) {
+      toast({
+        title: "Błąd",
+        description: "Rozszerzenie pliku nie pasuje do jego typu.",
         variant: "destructive",
       });
       return;
@@ -36,7 +84,7 @@ export function MediaUpload({ postId, onUploadComplete }: MediaUploadProps) {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
-      const fileExt = file.name.split(".").pop();
+      // Use validated extension
       const filePath = `${user.id}/${Date.now()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage

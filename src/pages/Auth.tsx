@@ -191,6 +191,14 @@ const Auth = () => {
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? "Logowanie..." : "Zaloguj się"}
                   </Button>
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="w-full text-sm text-muted-foreground"
+                    onClick={() => navigate("/password-reset")}
+                  >
+                    Zapomniałeś hasła?
+                  </Button>
                 </form>
               </CardContent>
             </Card>

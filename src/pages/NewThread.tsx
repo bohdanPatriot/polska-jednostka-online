@@ -9,6 +9,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { MediaUpload } from "@/components/posts/MediaUpload";
+import { z } from "zod";
+
+const threadSchema = z.object({
+  title: z.string().trim().min(5, "Tytuł musi mieć min. 5 znaków").max(200, "Tytuł może mieć max. 200 znaków"),
+  content: z.string().trim().min(10, "Treść musi mieć min. 10 znaków").max(10000, "Treść może mieć max. 10,000 znaków"),
+  category: z.enum(['historia', 'sprzet', 'taktyka', 'aktualnosci', 'offtopic']),
+});
 
 const NewThread = () => {
   const { categoryId } = useParams();
@@ -41,6 +48,24 @@ const NewThread = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId) return;
+
+    // SECURITY: Validate inputs
+    try {
+      threadSchema.parse({
+        title,
+        content,
+        category: categoryId,
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Błąd walidacji",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
 
     setLoading(true);
 
@@ -125,7 +150,9 @@ const NewThread = () => {
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Wprowadź tytuł..."
                   required
+                  maxLength={200}
                 />
+                <p className="text-xs text-muted-foreground">{title.length}/200 znaków</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="content">Treść</Label>
@@ -136,7 +163,9 @@ const NewThread = () => {
                   placeholder="Napisz swoją wiadomość..."
                   rows={12}
                   required
+                  maxLength={10000}
                 />
+                <p className="text-xs text-muted-foreground">{content.length}/10,000 znaków</p>
               </div>
               
               {firstPostId && (

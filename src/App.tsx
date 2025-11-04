@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import PasswordReset from "./pages/PasswordReset";
 import Forum from "./pages/Forum";
 import Category from "./pages/Category";
 import NewThread from "./pages/NewThread";
@@ -28,6 +29,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/password-reset" element={<PasswordReset />} />
           <Route path="/forum" element={<Forum />} />
           <Route path="/category/:categoryId" element={<Category />} />
           <Route path="/category/:categoryId/new" element={<NewThread />} />

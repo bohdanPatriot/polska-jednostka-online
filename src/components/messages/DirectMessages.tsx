@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { checkRateLimit, formatResetTime } from "@/lib/rateLimit";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -87,6 +88,22 @@ export function DirectMessages() {
       const validated = messageSchema.parse({ content: newMessage });
       const { data: { user } } = await supabase.auth.getUser();
       if (!user || !selectedChat) return;
+
+      // SECURITY: Rate limiting - max 20 messages per minute
+      const rateLimit = checkRateLimit({
+        identifier: `message:${user.id}`,
+        maxRequests: 20,
+        windowMs: 60 * 1000, // 1 minute
+      });
+
+      if (!rateLimit.allowed) {
+        toast({
+          title: "Zbyt wiele wiadomości",
+          description: `Poczekaj ${formatResetTime(rateLimit.resetAt!)} przed wysłaniem kolejnej wiadomości.`,
+          variant: "destructive",
+        });
+        return;
+      }
 
       const { error } = await supabase.from("direct_messages").insert({
         sender_id: user.id,

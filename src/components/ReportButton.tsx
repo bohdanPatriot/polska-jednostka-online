@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { checkRateLimit, formatResetTime } from "@/lib/rateLimit";
 import {
   Dialog,
   DialogContent,
@@ -55,6 +56,26 @@ export function ReportButton({ targetId, targetType, size = "sm" }: ReportButton
 
     setLoading(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Nie jesteś zalogowany");
+
+      // SECURITY: Rate limiting - max 5 reports per 15 minutes
+      const rateLimit = checkRateLimit({
+        identifier: `report:${user.id}`,
+        maxRequests: 5,
+        windowMs: 15 * 60 * 1000, // 15 minutes
+      });
+
+      if (!rateLimit.allowed) {
+        toast({
+          title: "Zbyt wiele zgłoszeń",
+          description: `Poczekaj ${formatResetTime(rateLimit.resetAt!)} przed wysłaniem kolejnego zgłoszenia.`,
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
       // Validate input
       const validated = reportSchema.parse({
         reason: reason,
@@ -62,9 +83,6 @@ export function ReportButton({ targetId, targetType, size = "sm" }: ReportButton
         targetType: targetType,
         targetId: targetId
       });
-
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Nie jesteś zalogowany");
 
       const { error } = await supabase.from("reports").insert({
         reporter_id: user.id,

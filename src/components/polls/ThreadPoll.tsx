@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { BarChart3 } from "lucide-react";
 import { format } from "date-fns";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 interface ThreadPollProps {
   threadId: string;
@@ -76,6 +77,19 @@ export function ThreadPoll({ threadId }: ThreadPollProps) {
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
+
+    // SECURITY: Rate limiting - max 10 votes per 5 minutes (prevents spam voting)
+    const rateLimit = checkRateLimit({
+      identifier: `poll:${user.id}`,
+      maxRequests: 10,
+      windowMs: 5 * 60 * 1000, // 5 minutes
+    });
+
+    if (!rateLimit.allowed) {
+      // Silent fail to prevent UI disruption
+      console.warn("Poll vote rate limit exceeded");
+      return;
+    }
 
     await supabase.from("poll_votes").insert({
       poll_id: poll.id,

@@ -37,12 +37,16 @@ serve(async (req) => {
     
     const userAgent = req.headers.get("user-agent") || "unknown";
 
-    // Get geolocation data from IP (using ipapi.co free API)
+    // Get geolocation data from IP with fallback
     let geoData = { city: null, region: null, country: null };
     
     if (ip !== "unknown") {
       try {
-        const geoResponse = await fetch(`https://ipapi.co/${ip}/json/`);
+        // Primary geolocation service: ipapi.co
+        const geoResponse = await fetch(`https://ipapi.co/${ip}/json/`, {
+          signal: AbortSignal.timeout(3000), // 3 second timeout
+        });
+        
         if (geoResponse.ok) {
           const geo = await geoResponse.json();
           geoData = {
@@ -50,9 +54,33 @@ serve(async (req) => {
             region: geo.region || null,
             country: geo.country_name || null,
           };
+        } else {
+          throw new Error("Primary geolocation service failed");
         }
       } catch (error) {
-        console.error("Geolocation lookup failed:", error);
+        console.error("Primary geolocation lookup failed:", error);
+        
+        // SECURITY: Fallback to ip-api.com (free, no API key needed)
+        try {
+          const fallbackResponse = await fetch(`http://ip-api.com/json/${ip}`, {
+            signal: AbortSignal.timeout(3000),
+          });
+          
+          if (fallbackResponse.ok) {
+            const geo = await fallbackResponse.json();
+            if (geo.status === "success") {
+              geoData = {
+                city: geo.city || null,
+                region: geo.regionName || null,
+                country: geo.country || null,
+              };
+              console.log("Using fallback geolocation service");
+            }
+          }
+        } catch (fallbackError) {
+          console.error("Fallback geolocation also failed:", fallbackError);
+          // Continue without geolocation data (graceful degradation)
+        }
       }
     }
 
