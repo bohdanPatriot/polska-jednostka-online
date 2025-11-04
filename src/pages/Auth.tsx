@@ -9,6 +9,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Shield } from "lucide-react";
 import heroBanner from "@/assets/hero-banner.jpg";
+import { z } from "zod";
+
+const signupSchema = z.object({
+  username: z.string().trim().min(3, "Nazwa użytkownika musi mieć min. 3 znaki").max(30, "Nazwa użytkownika może mieć max. 30 znaków").regex(/^[a-zA-Z0-9_]+$/, "Tylko litery, cyfry i podkreślenie"),
+  email: z.string().email("Nieprawidłowy adres email").max(255, "Email może mieć max. 255 znaków"),
+  password: z.string().min(8, "Hasło musi mieć min. 8 znaków").max(100, "Hasło może mieć max. 100 znaków").regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Hasło musi zawierać małą literę, wielką literę i cyfrę"),
+});
+
+const signinSchema = z.object({
+  email: z.string().email("Nieprawidłowy adres email"),
+  password: z.string().min(1, "Hasło jest wymagane"),
+});
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -28,6 +40,21 @@ const Auth = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate input
+    try {
+      signupSchema.parse({ username, email, password });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Błąd walidacji",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     setLoading(true);
 
     const { error } = await supabase.auth.signUp({
@@ -61,6 +88,21 @@ const Auth = () => {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate input
+    try {
+      signinSchema.parse({ email, password });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Błąd walidacji",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     setLoading(true);
 
     const { error, data } = await supabase.auth.signInWithPassword({

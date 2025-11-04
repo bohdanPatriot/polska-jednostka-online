@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { BookOpen, Trash2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { z } from "zod";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +31,11 @@ interface BlogEditorProps {
   onPostsChange: () => void;
 }
 
+const blogPostSchema = z.object({
+  title: z.string().trim().min(1, "Tytuł jest wymagany").max(200, "Tytuł może mieć maksymalnie 200 znaków"),
+  content: z.string().trim().min(1, "Treść jest wymagana").max(10000, "Treść może mieć maksymalnie 10,000 znaków"),
+});
+
 export function BlogEditor({ posts, onPostsChange }: BlogEditorProps) {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
@@ -39,13 +45,18 @@ export function BlogEditor({ posts, onPostsChange }: BlogEditorProps) {
   const { toast } = useToast();
 
   const handleSubmit = async () => {
-    if (!title.trim() || !content.trim()) {
-      toast({
-        title: "Błąd",
-        description: "Wypełnij wszystkie pola",
-        variant: "destructive",
-      });
-      return;
+    // Validate input
+    try {
+      blogPostSchema.parse({ title, content });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Błąd walidacji",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     setLoading(true);

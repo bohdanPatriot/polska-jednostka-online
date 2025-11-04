@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shield, ArrowLeft, User as UserIcon, BarChart3, FileText, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
 import { AuditLogViewer } from "@/components/admin/AuditLogViewer";
 import { UserSessionTracker } from "@/components/admin/UserSessionTracker";
 import { UserBanManager } from "@/components/admin/UserBanManager";
@@ -17,6 +18,8 @@ import { UserActivityView } from "@/components/admin/UserActivityView";
 import { BulkActions } from "@/components/admin/BulkActions";
 import { ReportQueue } from "@/components/admin/ReportQueue";
 import { UserVerificationManager } from "@/components/admin/UserVerificationManager";
+
+const roleSchema = z.enum(["admin", "moderator", "user"]);
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -84,6 +87,18 @@ const Admin = () => {
   };
 
   const handleRoleChange = async (userId: string, newRole: string) => {
+    // Validate role
+    try {
+      roleSchema.parse(newRole);
+    } catch (error) {
+      toast({
+        title: "Błąd walidacji",
+        description: "Nieprawidłowa rola",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const user = users.find(u => u.id === userId);
     if (!user) return;
 
@@ -106,13 +121,28 @@ const Admin = () => {
         description: "Nie udało się zmienić roli",
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Sukces",
-        description: "Rola została zmieniona",
-      });
-      fetchUsers();
+      return;
     }
+
+    // Log admin action
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    if (currentUser) {
+      await supabase.rpc("log_admin_action", {
+        p_admin_id: currentUser.id,
+        p_action_type: "role_change",
+        p_target_type: "user",
+        p_target_id: userId,
+        p_old_value: { role: oldRole },
+        p_new_value: { role: newRole },
+        p_reason: `Role changed from ${oldRole} to ${newRole}`
+      });
+    }
+
+    toast({
+      title: "Sukces",
+      description: "Rola została zmieniona",
+    });
+    fetchUsers();
   };
 
   const handleRankChange = async (userId: string, newRank: string) => {
