@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Send, UserPlus } from "lucide-react";
+import { MediaUpload } from "@/components/posts/MediaUpload";
 import { format } from "date-fns";
 import {
   Dialog,
@@ -41,6 +42,7 @@ export function DirectMessages() {
   const [newMessage, setNewMessage] = useState("");
   const [recipientUsername, setRecipientUsername] = useState("");
   const [isNewChatOpen, setIsNewChatOpen] = useState(false);
+  const [uploadedMedia, setUploadedMedia] = useState<Array<{ url: string; type: string }>>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -105,15 +107,24 @@ export function DirectMessages() {
         return;
       }
 
+      const mediaUrls = uploadedMedia.length > 0 
+        ? uploadedMedia.map(m => `[${m.type}](${m.url})`).join('\n')
+        : '';
+      
+      const messageContent = mediaUrls 
+        ? `${validated.content}\n\n${mediaUrls}`
+        : validated.content;
+
       const { error } = await supabase.from("direct_messages").insert({
         sender_id: user.id,
         recipient_id: selectedChat,
-        content: validated.content,
+        content: messageContent,
       });
 
       if (error) throw error;
 
       setNewMessage("");
+      setUploadedMedia([]);
       fetchMessages();
       toast({ title: "Wiadomość wysłana" });
     } catch (error: any) {
@@ -270,7 +281,7 @@ export function DirectMessages() {
                   ))}
               </ScrollArea>
 
-              <div className="flex gap-2">
+              <div className="space-y-2">
                 <Textarea
                   placeholder="Napisz wiadomość..."
                   value={newMessage}
@@ -283,9 +294,19 @@ export function DirectMessages() {
                   }}
                   rows={2}
                 />
-                <Button onClick={sendMessage} size="icon">
-                  <Send className="h-4 w-4" />
-                </Button>
+                <div className="flex gap-2 items-end">
+                  <div className="flex-1">
+                    <MediaUpload 
+                      onUploadComplete={(url, type) => {
+                        setUploadedMedia([...uploadedMedia, { url, type }]);
+                        toast({ title: "Media dodane", description: "Kliknij wyślij aby wysłać wiadomość" });
+                      }}
+                    />
+                  </div>
+                  <Button onClick={sendMessage} size="icon">
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
           ) : (

@@ -24,7 +24,7 @@ const Thread = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [currentPostId, setCurrentPostId] = useState<string | null>(null);
+  const [uploadedMedia, setUploadedMedia] = useState<Array<{ url: string; type: string }>>([]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -106,8 +106,21 @@ const Thread = () => {
         variant: "destructive",
       });
     } else {
-      setCurrentPostId(post.id);
+      // Add media attachments if any
+      if (uploadedMedia.length > 0) {
+        const attachments = uploadedMedia.map(media => ({
+          post_id: post.id,
+          file_url: media.url,
+          file_type: media.type,
+          file_name: `attachment_${Date.now()}`,
+          file_size: 0,
+        }));
+        
+        await supabase.from("post_attachments").insert(attachments);
+      }
+      
       setNewPost("");
+      setUploadedMedia([]);
       fetchPosts();
       toast({
         title: "Sukces",
@@ -274,9 +287,11 @@ const Thread = () => {
                   rows={6}
                   required
                 />
-                {currentPostId && (
-                  <MediaUpload postId={currentPostId} />
-                )}
+                <MediaUpload 
+                  onUploadComplete={(url, type) => {
+                    setUploadedMedia([...uploadedMedia, { url, type }]);
+                  }}
+                />
                 <Button type="submit" disabled={submitting}>
                   {submitting ? "Wysyłanie..." : "Wyślij odpowiedź"}
                 </Button>
