@@ -9,7 +9,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Send, UserPlus } from "lucide-react";
-import { MediaUpload } from "@/components/posts/MediaUpload";
 import { format } from "date-fns";
 import {
   Dialog,
@@ -20,6 +19,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { z } from "zod";
+import { MediaUpload } from "@/components/posts/MediaUpload";
 
 const messageSchema = z.object({
   content: z.string().trim().min(1).max(2000, "Wiadomość nie może być dłuższa niż 2000 znaków")
