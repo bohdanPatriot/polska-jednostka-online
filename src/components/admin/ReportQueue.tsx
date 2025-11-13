@@ -29,6 +29,27 @@ export function ReportQueue() {
 
   useEffect(() => {
     fetchReports();
+    
+    // Subscribe to realtime updates for reports
+    const channel = supabase
+      .channel("reports_changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "reports",
+        },
+        () => {
+          console.log("Report updated, refreshing...");
+          fetchReports();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchReports = async () => {
