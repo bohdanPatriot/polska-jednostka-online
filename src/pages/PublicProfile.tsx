@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { ArrowLeft, User, Calendar, MessageSquare, Award, BookOpen, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -199,12 +200,37 @@ const PublicProfile = () => {
 
             {badges.length > 0 && (
               <div className="pt-4 border-t">
-                <h3 className="font-semibold mb-3">Odznaki</h3>
+                <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <Award className="h-4 w-4" />
+                  Odznaki
+                </h3>
                 <div className="flex flex-wrap gap-2">
                   {badges.map((userBadge: any) => (
-                    <Badge key={userBadge.id} variant="secondary" className="text-sm">
-                      {userBadge.badges?.icon} {userBadge.badges?.name}
-                    </Badge>
+                    <HoverCard key={userBadge.id} openDelay={200}>
+                      <HoverCardTrigger asChild>
+                        <Badge 
+                          variant="secondary" 
+                          className="text-sm cursor-help hover:bg-secondary/80 transition-colors"
+                        >
+                          <span className="mr-1.5">{userBadge.badges?.icon}</span>
+                          {userBadge.badges?.name}
+                        </Badge>
+                      </HoverCardTrigger>
+                      <HoverCardContent className="w-64" side="top">
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{userBadge.badges?.icon}</span>
+                            <h4 className="font-semibold">{userBadge.badges?.name}</h4>
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            {userBadge.badges?.description}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Otrzymano: {new Date(userBadge.earned_at).toLocaleDateString("pl-PL")}
+                          </p>
+                        </div>
+                      </HoverCardContent>
+                    </HoverCard>
                   ))}
                 </div>
               </div>
