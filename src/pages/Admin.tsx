@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, ArrowLeft, User as UserIcon, BarChart3, FileText, Users } from "lucide-react";
+import { Shield, ArrowLeft, User as UserIcon, BarChart3, FileText, Users, Award } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { AuditLogViewer } from "@/components/admin/AuditLogViewer";
@@ -18,6 +18,7 @@ import { UserActivityView } from "@/components/admin/UserActivityView";
 import { BulkActions } from "@/components/admin/BulkActions";
 import { ReportQueue } from "@/components/admin/ReportQueue";
 import { UserVerificationManager } from "@/components/admin/UserVerificationManager";
+import { BadgeManager } from "@/components/admin/BadgeManager";
 
 const roleSchema = z.enum(["admin", "moderator", "user"]);
 
@@ -217,8 +218,9 @@ const Admin = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="users" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="users">Użytkownicy</TabsTrigger>
+            <TabsTrigger value="badges">Odznaki</TabsTrigger>
             <TabsTrigger value="analytics">Analityka</TabsTrigger>
             <TabsTrigger value="reports">Zgłoszenia</TabsTrigger>
             <TabsTrigger value="sessions">IP Tracking</TabsTrigger>
@@ -316,6 +318,10 @@ const Admin = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="badges">
+            <BadgeManager />
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6">
